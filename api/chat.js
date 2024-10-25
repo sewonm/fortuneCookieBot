@@ -18,10 +18,15 @@ export default async function handler(req, res) {
                 }
             });
 
-            res.status(200).json(response.data);
+            res.status(200).json(response.data);  // Send response back to frontend
         } catch (error) {
-            console.error('Error fetching data from OpenAI:', error.message || error.response.data);
-            res.status(500).json({ error: 'Error connecting to OpenAI API.' });
+            console.error('Error connecting to OpenAI:', error.message || error.response?.data || error);
+
+            // Send a more detailed error message to the frontend
+            res.status(500).json({
+                error: 'Error connecting to OpenAI API.',
+                details: error.message || error.response?.data || error
+            });
         }
     } else {
         res.status(405).json({ error: 'Method not allowed. Use POST.' });
