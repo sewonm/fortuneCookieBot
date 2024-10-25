@@ -13,7 +13,7 @@ function openCookie() {
     cookieImg.style.opacity = '0';
 
     setTimeout(() => {
-        cookieImg.src = 'FCOpen.jpg';
+        cookieImg.src = 'FCOpened.png';
         setTimeout(() => {
             cookieImg.style.opacity = '1';
         }, 100);
