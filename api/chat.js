@@ -1,10 +1,22 @@
 import axios from 'axios';
+import dotenv from 'dotenv'; // Only needed if running locally
+dotenv.config(); // Loads environment variables from .env file if running locally
 
 export default async function handler(req, res) {
+    // Check if OpenAI API Key is available
+    if (!process.env.OPENAI_API_KEY) {
+        console.error('Missing OpenAI API Key'); // Log error to server logs
+        return res.status(500).json({ error: 'OpenAI API key is missing' });
+    }
+
     if (req.method === 'POST') {
         const userMessage = req.body.message;
 
+        // Debugging: Log the OpenAI API key (REMOVE THIS AFTER TESTING)
+        console.log('API Key:', process.env.OPENAI_API_KEY);
+
         try {
+            // Make a POST request to OpenAI's API
             const response = await axios.post('https://api.openai.com/v1/chat/completions', {
                 model: 'gpt-3.5-turbo',
                 messages: [
@@ -18,17 +30,21 @@ export default async function handler(req, res) {
                 }
             });
 
-            res.status(200).json(response.data);  // Send response back to frontend
-        } catch (error) {
-            console.error('Error connecting to OpenAI:', error.message || error.response?.data || error);
+            // Send the OpenAI API response back to the frontend
+            res.status(200).json(response.data);
 
-            // Send a more detailed error message to the frontend
+        } catch (error) {
+            // Log the error details for debugging
+            console.error('Error connecting to OpenAI API:', error.message || error.response?.data || error);
+
+            // Send a meaningful error response back to the client
             res.status(500).json({
                 error: 'Error connecting to OpenAI API.',
                 details: error.message || error.response?.data || error
             });
         }
     } else {
+        // Handle invalid request method
         res.status(405).json({ error: 'Method not allowed. Use POST.' });
     }
 }
