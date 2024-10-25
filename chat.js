@@ -18,7 +18,6 @@ export default async function handler(req, res) {
                 }
             });
 
-            // Send OpenAI API response back to the frontend
             res.status(200).json(response.data);
         } catch (error) {
             console.error('Error fetching data from OpenAI:', error.message || error.response.data);
